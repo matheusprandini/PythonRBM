@@ -38,8 +38,8 @@ class RBM:
         else:
             Z = np.dot(self.parameters['W'].T, input_data.T) + self.parameters['b1']
 		
-		# Logistic sigmoid
-        A = self.sigmoid(Z)
+		# Logistic tanh
+        A = np.tanh(Z)
 
         return A.T
 		
@@ -56,15 +56,16 @@ class RBM:
     def training_nn(self, training_data, epochs=1000):
 	
         for i in range(epochs):
-            V0 = training_data
+            for data in training_data:
+                V0 = np.resize(data, (1,9))
 
-            H0 = self.forward_backward_phase(V0)
+                H0 = self.forward_backward_phase(V0)
 			
-            V1 = self.forward_backward_phase(H0)
+                V1 = self.forward_backward_phase(H0)
 			
-            H1 = self.forward_backward_phase(V1)
+                H1 = self.forward_backward_phase(V1)
 			
-            self.update_parameters(V0,V1,H0,H1)
+                self.update_parameters(V0,V1,H0,H1)
 			
     def test_nn(self, test_data):
         V0 = test_data
@@ -73,7 +74,8 @@ class RBM:
 			
         V1 = self.forward_backward_phase(H0)
 		
-        print(V1)
+        #print("Hidden Layer: ", H0)
+        print("Reconstructed data: ", V1)
 	
     def sigmoid(self,x):
         return 1 / (1 + np.exp(-x))
